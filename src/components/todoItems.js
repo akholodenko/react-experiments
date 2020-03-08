@@ -18,6 +18,9 @@ export default () => {
 
   const addToDoItem = item => dispatch({ type: 'add', payload: item })
   const removeToDoItem = itemId => dispatch({ type: 'remove', payload: itemId })
+  const nextId = () => {
+    return state.length ? [...state].sort((a, b) => b.id - a.id)[0].id + 1 : 1
+  }
 
   return (
     <div>
@@ -33,10 +36,9 @@ export default () => {
         value={newItem}
         onChange={e => setNewItem(e.target.value)}
         autoComplete="none"
-      />{' '}
-      <button
-        onClick={() => addToDoItem({ id: state.length + 1, title: newItem })}
-      >
+      />
+      {`next index ${nextId()}`}
+      <button onClick={() => addToDoItem({ id: nextId(), title: newItem })}>
         add
       </button>
     </div>
