@@ -1,5 +1,7 @@
 import React, { useReducer, useState } from 'react'
 import todoReducer from '../reducers/todoReducer'
+import todoContext from '../contexts/todoContext'
+import ToDoSummary from './todoSummary'
 
 const items = [
   {
@@ -16,7 +18,8 @@ export default () => {
   const [state, dispatch] = useReducer(todoReducer, items)
   const [newItem, setNewItem] = useState('')
 
-  const addToDoItem = item => dispatch({ type: 'add', payload: item })
+  const addToDoItem = item =>
+    dispatch({ type: 'add', payload: { ...item, id: nextId() } })
   const removeToDoItem = itemId => dispatch({ type: 'remove', payload: itemId })
   const nextId = () => {
     return state.length ? [...state].sort((a, b) => b.id - a.id)[0].id + 1 : 1
@@ -37,10 +40,11 @@ export default () => {
         onChange={e => setNewItem(e.target.value)}
         autoComplete="none"
       />
-      {`next index ${nextId()}`}
-      <button onClick={() => addToDoItem({ id: nextId(), title: newItem })}>
-        add
-      </button>
+      <button onClick={() => addToDoItem({ title: newItem })}>add</button>
+      &nbsp;({`next index: ${nextId()}`})
+      <todoContext.Provider value={{ state, addToDoItem }}>
+        <ToDoSummary></ToDoSummary>
+      </todoContext.Provider>
     </div>
   )
 }
